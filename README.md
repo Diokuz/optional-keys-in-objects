@@ -8,6 +8,7 @@ Adding new keys to objects is a common operation in ECMA Script. With special sy
 {
   foo: 'bar',
   baz?: possibleUndefinedValue,
+  bar?,
 }
 ```
 
@@ -96,7 +97,7 @@ function enrich(target) {
 
 ## Syntax
 
-`?` character between key and `:` in object notation leads to the following: key will be added to object only if the value is not `undefined`.
+`?` character right after key in object notation leads to the following: key will be added to object only if the value is not `undefined`.
 
 ### Examples
 
@@ -108,4 +109,6 @@ const b = { foo?: 5 } // { foo: 5 }
 const c = { foo?: condition ? 'bar' : undefined } // { foo: 'bar' } or {}, depends on condition
 
 const d = { [`foo`]?: undefined } // {}
+
+const e = { foo? } // {} if foo === undefined
 ```
