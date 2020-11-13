@@ -95,9 +95,16 @@ function enrich(target) {
 }
 ```
 
-## Syntax
+## Syntax and semantics
 
-`?` character right after key in object notation leads to the following: key will be added to object only if the value is not `undefined`.
+The `?` character right after key in object notation leads to the following: key will be added to object only if the value is not `undefined`.
+It may appear in three positions:
+
+```js
+{ foo?: 5 } // optional object literal property definition
+{ [expr]?: value } // optional object computed property definition
+{ foo? } // optional object property value shorthand defintion
+```
 
 ### Examples
 
@@ -112,3 +119,30 @@ const d = { [`foo`]?: undefined } // {}
 
 const e = { foo? } // {} if foo === undefined
 ```
+
+
+### Evaluation order
+
+Evaluation order of computed property name and property value pair in object definition should be same as without optional key `?` operator.
+
+```js
+{ [exprName]?: exprValue, } // exprName evaluated first, exprValue second
+```
+
+This corresponds to the [well-established order](https://www.ecma-international.org/ecma-262/5.1/#sec-11.1.5) of execution of property names and values.
+
+So, in the following code
+
+```js
+let i = 0
+const a = {
+  [i++]?: undefined,
+  [i++]?: 'a',
+}
+```
+
+variable `a` should be `{ '1': 'a' }` and not `{ '0': 'a' }`.
+
+Another example that illustrates well the importance of consistent behavior. Having the following expression `{[++i]: ++i}` we will get `{ '1': 2 }` as a result of its execution. But if we are going to calculate the value first using `?` operator we will get `{ '2': 1 }`, which does not meet our expectations.
+
+This way adding optional key `?` operator to object definition should not change result of its evaluation, except removing keys with undefined values.
